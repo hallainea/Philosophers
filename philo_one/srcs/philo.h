@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/14 11:58:05 by ahallain          #+#    #+#             */
-/*   Updated: 2021/03/14 18:50:15 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/03/15 13:52:59 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ typedef struct	s_fork
 
 typedef	struct	s_philo
 {
-	bool			dead;
+	bool			*dead;
 	int				id;
 	pthread_mutex_t	*mutex;
 	t_arg			*arg;
