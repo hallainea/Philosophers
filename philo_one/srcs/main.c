@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 21:54:08 by ahallain          #+#    #+#             */
-/*   Updated: 2021/03/15 14:09:51 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/03/27 12:07:25 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,27 +16,29 @@
 
 t_philo	*create_philo(t_arg *arg, t_fork *fork)
 {
-	t_philo			*philo;
-	pthread_mutex_t	*mutex;
 	int				index;
-	bool			*dead;
+	pthread_mutex_t	*mutex;
+	pthread_mutex_t	*dead;
+	t_philo			*philo;
+	pthread_t		*thread;
 
-	if (!(dead = malloc(sizeof(bool)))
-		|| !(mutex = malloc(sizeof(pthread_mutex_t)))
-		|| !(philo = malloc(sizeof(t_philo) * arg->amount)))
+	if (!(mutex = malloc(sizeof(pthread_mutex_t)))
+		|| !(dead = malloc(sizeof(pthread_mutex_t)))
+		|| !(philo = malloc(sizeof(t_philo) * arg->amount))
+		|| !(thread = malloc(sizeof(pthread_t))))
 		return (0);
-	*dead = false;
 	pthread_mutex_init(mutex, NULL);
+	pthread_mutex_init(dead, NULL);
 	index = arg->amount;
 	while (index--)
 	{
-		philo[index].dead = dead;
 		philo[index].id = index;
 		philo[index].mutex = mutex;
+		philo[index].dead = dead;
 		philo[index].arg = arg;
 		philo[index].left = fork + index;
 		philo[index].right = index == arg->amount - 1 ? fork : fork + index + 1;
-		pthread_create(arg->threads + index, NULL, philosopher, philo + index);
+		pthread_create(thread, NULL, philosopher, philo + index);
 	}
 	return (philo);
 }
@@ -58,9 +60,9 @@ int		main(int argc, char **argv)
 		fork[index].taken = false;
 	philo = create_philo(arg, fork);
 	index = arg->amount;
-	while (index--)
-		pthread_join(arg->threads[index], NULL);
-	free(arg->threads);
+	pthread_mutex_lock(philo->dead);
+	pthread_mutex_lock(philo->dead);
+	pthread_mutex_unlock(philo->dead);
 	free(arg);
 	free(fork);
 	free(philo->dead);

@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 07:19:15 by ahallain          #+#    #+#             */
-/*   Updated: 2021/03/15 14:10:29 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/03/27 12:10:54 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@ void	action(t_philo philo, char *str, int millis)
 {
 	struct timeval	time;
 
-	if (*philo.dead)
-		return ;
 	gettimeofday(&time, NULL);
 	printf("%ld %d %s\n", time.tv_usec / 1000, philo.id, str);
 	if (millis)
@@ -50,7 +48,7 @@ void	*philosopher(void *ptr)
 	struct timeval	time;
 
 	philo = ptr;
-	while (!*philo->dead)
+	while (1)
 		if (check(philo))
 		{
 			gettimeofday(&time, NULL);
@@ -63,11 +61,11 @@ void	*philosopher(void *ptr)
 			action(*philo, "is sleeping", philo->arg->sleep);
 			gettimeofday(&time, NULL);
 			if (time.tv_usec - old_timestamp >= philo->arg->die * 1000)
-				action(*philo, "died", 0);
+				break ;
 			else
 				action(*philo, "is thinking", 0);
-			if (time.tv_usec - old_timestamp >= philo->arg->die * 1000)
-				*philo->dead = true;
 		}
+	action(*philo, "died", 0);
+	pthread_mutex_unlock(philo->dead);
 	return (NULL);
 }
