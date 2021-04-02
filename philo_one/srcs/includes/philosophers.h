@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:29:07 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/02 23:05:44 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/02 23:47:40 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,5 @@ typedef struct	s_philosopher
 	pthread_t				*thread;
 }				t_philosopher;
 
-void	*spawn(void *ptr);
+void			*spawn(void *ptr);
 #endif

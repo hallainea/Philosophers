@@ -6,12 +6,12 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 20:34:23 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/02 23:06:31 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/02 23:48:37 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "../includes/philosphers.h"
+#include "../includes/philosophers.h"
 #include "../includes/npc.h"
 
 t_fork			*init_forks(size_t amount)

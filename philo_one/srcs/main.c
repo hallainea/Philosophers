@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:21:09 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/02 23:44:39 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/02 23:50:54 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ int		clean(bool *dead, t_parameters *parameters, t_fork *forks,
 	if (forks)
 	{
 		while (philosophers->parameters->number_of_philosophers--)
-			pthread_mutex_destroy(&forks[philosophers->parameters->number_of_philosophers].mutex);
+			pthread_mutex_destroy(&forks[philosophers->
+				parameters->number_of_philosophers].mutex);
 		free(forks);
 	}
 	if (parameters)
@@ -46,7 +47,7 @@ void	alive(t_philosopher *philosophers)
 	pthread_join(*philosophers->thread, NULL);
 }
 
-int 	main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
 	bool			*dead;
 	t_parameters	*parameters;
@@ -61,7 +62,8 @@ int 	main(int argc, char **argv)
 	philosophers = NULL;
 	if (!((parameters = parse(argc, argv))
 		&& (forks = init_forks(parameters->number_of_philosophers))
-		&& (philosophers = init_philosophers(parameters, forks, dead, parameters->number_of_philosophers))))
+		&& (philosophers = init_philosophers(parameters,
+			forks, dead, parameters->number_of_philosophers))))
 		return (clean(dead, parameters, forks, philosophers));
 	spawn_all(philosophers);
 	alive(philosophers);
