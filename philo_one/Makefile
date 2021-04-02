@@ -1,7 +1,8 @@
-SOURCES				=	utils/ft_strlen.c \
-						utils/ft_atoi.c \
+SOURCES				=	srcs/utils/ft_strlen.c \
+						srcs/utils/ft_atos.c \
+						srcs/npc/character.c \
+						srcs/npc/management.c \
 						srcs/parse.c \
-						srcs/philo.c \
 						srcs/main.c
 OBJECTS				=	${SOURCES:.c=.o}
 

@@ -1,33 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   ft_atos.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/14 11:58:05 by ahallain          #+#    #+#             */
-/*   Updated: 2021/03/27 11:42:03 by ahallain         ###   ########.fr       */
+/*   Created: 2021/04/02 20:28:29 by ahallain          #+#    #+#             */
+/*   Updated: 2021/04/02 22:01:09 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#include <stddef.h>
 
-# include <stdbool.h>
-# include "arg.h"
-
-typedef struct	s_fork
+int	ft_atos(char *str, size_t *to)
 {
-	bool	taken;
-}				t_fork;
-
-typedef	struct	s_philo
-{
-	int				id;
-	pthread_mutex_t	*dead;
-	pthread_mutex_t	*mutex;
-	t_arg			*arg;
-	t_fork			*left;
-	t_fork			*right;
-}				t_philo;
-#endif
+	*to = 0;
+	while (*str >= '0' && *str <= '9')
+		*to = *to * 10 + *str++ - '0';
+	if (*str)
+		return (-1);
+	return (0);
+}

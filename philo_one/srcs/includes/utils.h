@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fct.h                                              :+:      :+:    :+:   */
+/*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/12 07:14:22 by ahallain          #+#    #+#             */
-/*   Updated: 2021/03/14 18:50:32 by ahallain         ###   ########.fr       */
+/*   Created: 2021/04/02 20:29:36 by ahallain          #+#    #+#             */
+/*   Updated: 2021/04/02 22:01:54 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FCT_H
-# define FCT_H
+#ifndef UTILS_H
+# define UTILS_H
 
-# include "philo.h"
+# include <stddef.h>
 
-t_arg	*parse(char **args);
-void	*philosopher(void *ptr);
+size_t	ft_strlen(char *str);
+int		ft_atos(char *str, size_t *to);
 #endif

@@ -5,28 +5,33 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/12 07:10:55 by ahallain          #+#    #+#             */
-/*   Updated: 2021/03/27 11:59:43 by ahallain         ###   ########.fr       */
+/*   Created: 2021/04/02 20:47:10 by ahallain          #+#    #+#             */
+/*   Updated: 2021/04/02 22:01:15 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "arg.h"
-#include "../utils/lib.h"
+#include <sys/time.h>
+#include "includes/parameters.h"
+#include "includes/utils.h"
 
-t_arg	*parse(char **args)
+t_parameters	*parse(int argc, char **argv)
 {
-	t_arg	*arg;
+	t_parameters	*parameters;
 
-	if (!(arg = malloc(sizeof(t_arg))))
-		return (0);
-	arg->amount = ft_atoi(*args++);
-	arg->die = ft_atoi(*args++);
-	arg->eat = ft_atoi(*args++);
-	arg->sleep = ft_atoi(*args++);
-	if (*args)
-		arg->max_eat = ft_atoi(*args++);
-	else
-		arg->max_eat = -1;
-	return (arg);
+	if (!((argc == 5 || argc == 6)
+		&& (parameters = malloc(sizeof(t_parameters)))))
+		return (NULL);
+	parameters->number_of_times_each_philosopher_must_eat = -1;
+	if (ft_atos(argv[1], &parameters->number_of_philosophers)
+		|| ft_atos(argv[2], &parameters->time_to_die)
+		|| ft_atos(argv[3], &parameters->time_to_eat)
+		|| ft_atos(argv[4], &parameters->time_to_sleep)
+		|| (argc == 6 && ft_atos(argv[5], &parameters->number_of_times_each_philosopher_must_eat))
+		|| gettimeofday(&parameters->start, NULL))
+	{
+		free(parameters);
+		return (NULL);
+	}
+	return (parameters);
 }

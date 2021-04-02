@@ -1,18 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lib.h                                              :+:      :+:    :+:   */
+/*   character.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/12 04:51:25 by ahallain          #+#    #+#             */
-/*   Updated: 2021/03/14 18:50:37 by ahallain         ###   ########.fr       */
+/*   Created: 2021/04/02 21:48:19 by ahallain          #+#    #+#             */
+/*   Updated: 2021/04/02 22:02:38 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIB_H
-# define LIB_H
+#include <unistd.h>
+#include "../includes/philosphers.h"
 
-size_t	ft_strlen(char *str);
-int		ft_atoi(const char *str);
-#endif
+void			*spawn(void *ptr)
+{
+	t_philosopher	*philosopher;
+
+	philosopher = ptr;
+	write(1, "Hello World!\n", 13);
+	(void)philosopher;
+	return (NULL);
+}

@@ -5,68 +5,64 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/11 21:54:08 by ahallain          #+#    #+#             */
-/*   Updated: 2021/03/27 12:07:25 by ahallain         ###   ########.fr       */
+/*   Created: 2021/03/31 12:21:09 by ahallain          #+#    #+#             */
+/*   Updated: 2021/04/02 22:05:27 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
 #include <stdlib.h>
-#include "fct.h"
+#include "includes/main.h"
 
-t_philo	*create_philo(t_arg *arg, t_fork *fork)
+int		clean(bool *dead, t_parameters *parameters, t_fork *forks,
+	t_philosopher *philosophers)
 {
-	int				index;
-	pthread_mutex_t	*mutex;
-	pthread_mutex_t	*dead;
-	t_philo			*philo;
-	pthread_t		*thread;
+	t_philosopher	*tmp;
 
-	if (!(mutex = malloc(sizeof(pthread_mutex_t)))
-		|| !(dead = malloc(sizeof(pthread_mutex_t)))
-		|| !(philo = malloc(sizeof(t_philo) * arg->amount))
-		|| !(thread = malloc(sizeof(pthread_t))))
-		return (0);
-	pthread_mutex_init(mutex, NULL);
-	pthread_mutex_init(dead, NULL);
-	index = arg->amount;
-	while (index--)
+	free(dead);
+	if (forks)
 	{
-		philo[index].id = index;
-		philo[index].mutex = mutex;
-		philo[index].dead = dead;
-		philo[index].arg = arg;
-		philo[index].left = fork + index;
-		philo[index].right = index == arg->amount - 1 ? fork : fork + index + 1;
-		pthread_create(thread, NULL, philosopher, philo + index);
+		while (philosophers->parameters->number_of_philosophers--)
+			pthread_mutex_destroy(&forks[philosophers->parameters->number_of_philosophers].mutex);
+		free(forks);
 	}
-	return (philo);
+	if (parameters)
+		free(parameters);
+	while (philosophers)
+	{
+		tmp = philosophers->next;
+		free(philosophers->thread);
+		free(philosophers);
+		philosophers = tmp;
+	}
+	return (1);
 }
 
-int		main(int argc, char **argv)
+void	alive(t_philosopher *philosophers)
 {
-	t_arg	*arg;
-	t_fork	*fork;
-	t_philo	*philo;
-	int		index;
+	if (philosophers->next)
+		alive(philosophers->next);
+	pthread_join(*philosophers->thread, NULL);
+}
 
-	if (argc < 5 || argc > 6)
+int 	main(int argc, char **argv)
+{
+	bool			*dead;
+	t_parameters	*parameters;
+	t_fork			*forks;
+	t_philosopher	*philosophers;
+
+	if (!(dead = malloc(sizeof(bool))))
 		return (1);
-	arg = parse(argv + 1);
-	if (!(fork = malloc(sizeof(t_fork) * arg->amount)))
-		return (0);
-	index = arg->amount;
-	while (index--)
-		fork[index].taken = false;
-	philo = create_philo(arg, fork);
-	index = arg->amount;
-	pthread_mutex_lock(philo->dead);
-	pthread_mutex_lock(philo->dead);
-	pthread_mutex_unlock(philo->dead);
-	free(arg);
-	free(fork);
-	free(philo->dead);
-	free(philo->mutex);
-	free(philo);
+	*dead = false;
+	parameters = NULL;
+	forks = NULL;
+	philosophers = NULL;
+	if (!((parameters = parse(argc, argv))
+		&& (forks = init_forks(parameters->number_of_philosophers))
+		&& (philosophers = init_philosophers(parameters, forks, dead, parameters->number_of_philosophers))))
+		return (clean(dead, parameters, forks, philosophers));
+	spawn_all(philosophers);
+	alive(philosophers);
+	clean(dead, parameters, forks, philosophers);
 	return (0);
 }
