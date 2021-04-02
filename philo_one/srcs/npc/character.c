@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 21:48:19 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/02 23:33:52 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/02 23:43:17 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,29 +42,35 @@ void	*spawn(void *ptr)
 
 	if (gettimeofday(&last, NULL))
 		return (NULL);
+	millis = 0;
 	philosopher = ptr;
-	while (!*philosopher->dead)
+	while (!*philosopher->dead && millis < philosopher->parameters->time_to_die)
+	{
+		if (gettimeofday(&eat, NULL))
+			break ;
+		millis = (eat.tv_sec - last.tv_sec) * 1000 + (eat.tv_usec - last.tv_usec) / 1000;
 		if (can_eat(philosopher))
 		{
 			console_log(philosopher->parameters->start, philosopher->id, "has taken a fork");
 			if (gettimeofday(&eat, NULL))
-				break ;
+				break;
 			console_log(philosopher->parameters->start, philosopher->id, "is eating");
 			usleep(philosopher->parameters->time_to_eat * 1000);
 			philosopher->eat_count++;
 			if (philosopher->eat_count >= philosopher->parameters->number_of_times_each_philosopher_must_eat)
-				break ;
+				break;
 			philosopher->fork_left->taken = false;
 			philosopher->fork_right->taken = false;
 			console_log(philosopher->parameters->start, philosopher->id, "is sleeping");
 			usleep(philosopher->parameters->time_to_sleep * 1000);
 			millis = (eat.tv_sec - last.tv_sec) * 1000 + (eat.tv_usec - last.tv_usec) / 1000;
 			if (millis >= philosopher->parameters->time_to_die)
-				break ;
+				break;
 			if (gettimeofday(&last, NULL))
-				break ;
+				break;
 			console_log(philosopher->parameters->start, philosopher->id, "is thinking");
 		}
+	}
 	*philosopher->dead = true;
 	console_log(philosopher->parameters->start, philosopher->id, "died");
 	return (NULL);
