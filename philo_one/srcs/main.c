@@ -6,12 +6,14 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:21:09 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/02 22:05:27 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/02 22:52:57 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <unistd.h>
 #include "includes/main.h"
+#include "includes/npc.h"
 
 int		clean(bool *dead, t_parameters *parameters, t_fork *forks,
 	t_philosopher *philosophers)

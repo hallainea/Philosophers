@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 20:34:23 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/02 22:07:35 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/02 23:06:31 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,13 @@ t_philosopher	*init_philosophers(t_parameters *parameters, t_fork *forks,
 
 	if (!(philosopher = malloc(sizeof(t_philosopher))))
 		return (NULL);
+	philosopher->id = amount;
 	philosopher->parameters = parameters;
 	if (parameters->number_of_philosophers == amount)
-		philosopher->fork_right = forks[0];
+		philosopher->fork_right = forks;
 	else
-		philosopher->fork_right = forks[amount];
-	philosopher->fork_left = forks[amount - 1];
+		philosopher->fork_right = forks + amount;
+	philosopher->fork_left = forks + amount - 1;
 	philosopher->eat_count = 0;
 	philosopher->dead = dead;
 	philosopher->next = NULL;

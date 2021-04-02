@@ -1,5 +1,6 @@
 SOURCES				=	srcs/utils/ft_strlen.c \
 						srcs/utils/ft_atos.c \
+						srcs/npc/log.c \
 						srcs/npc/character.c \
 						srcs/npc/management.c \
 						srcs/parse.c \
