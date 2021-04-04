@@ -1,32 +1,37 @@
-SOURCES				=	srcs/utils/ft_strlen.c \
-						srcs/utils/ft_atos.c \
-						srcs/npc/log.c \
-						srcs/npc/character.c \
-						srcs/npc/management.c \
-						srcs/parse.c \
-						srcs/main.c
-OBJECTS				=	${SOURCES:.c=.o}
-
 NAME				=	philo_one
+DIRECTORY_SOURCES	=	sources
+DIRECTORY_OBJECTS	=	objects
+
+SOURCES				=	utils/ft_strlen.c \
+						utils/ft_atos.c \
+						npc/log.c \
+						npc/character.c \
+						npc/management.c \
+						parse.c \
+						main.c
+OBJECTS				=	$(SOURCES:%.c=$(DIRECTORY_OBJECTS)/%.o)
 
 COMPILE				=	cc
-REMOVE				=	rm -f
+REMOVE				=	rm -rf
 
 COMPILATION_FLAGS	=	-Wall -Wextra -Werror
 
-.c.o:
-	${COMPILE} ${COMPILATION_FLAGS} -c $< -o ${<:.c=.o}
+all: $(NAME)
 
-all: ${NAME}
+$(DIRECTORY_OBJECTS):
+	mkdir -p $(dir $(OBJECTS))
 
-${NAME}: ${OBJECTS}
-	${COMPILE} -o ${NAME} ${OBJECTS} -pthread
+$(DIRECTORY_OBJECTS)/%.o: $(DIRECTORY_SOURCES)/%.c | $(DIRECTORY_OBJECTS)
+	$(COMPILE) $(COMPILATION_FLAGS) -c $< -o $@
+
+$(NAME): $(OBJECTS)
+	$(COMPILE) -o $(NAME) $(OBJECTS) -pthread
 
 clean:
-	${REMOVE} ${OBJECTS}
+	$(REMOVE) $(DIRECTORY_OBJECTS)
 
 fclean: clean
-	${REMOVE} ${NAME}
+	$(REMOVE) $(NAME)
 
 re: fclean all
 
