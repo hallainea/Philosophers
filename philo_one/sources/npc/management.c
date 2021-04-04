@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 20:34:23 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/02 23:48:37 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/04 22:36:30 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ t_philosopher	*init_philosophers(t_parameters *parameters, t_fork *forks,
 		philosopher->fork_right = forks + amount;
 	philosopher->fork_left = forks + amount - 1;
 	philosopher->eat_count = 0;
+	philosopher->millis = 0;
 	philosopher->dead = dead;
 	philosopher->next = NULL;
 	if (--amount)
@@ -57,4 +58,5 @@ void			spawn_all(t_philosopher *philosopher)
 	if (!(philosopher->thread = malloc(sizeof(pthread_t))))
 		return ;
 	pthread_create(philosopher->thread, NULL, spawn, philosopher);
+	pthread_detach(*philosopher->thread);
 }

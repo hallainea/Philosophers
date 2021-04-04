@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:21:09 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/02 23:50:54 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/04 22:45:01 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,8 @@ int		clean(bool *dead, t_parameters *parameters, t_fork *forks,
 
 void	alive(t_philosopher *philosophers)
 {
-	while (philosophers->next)
-		philosophers = philosophers->next;
-	pthread_join(*philosophers->thread, NULL);
+	while (!*philosophers->dead)
+		usleep(1000);
 }
 
 int		main(int argc, char **argv)

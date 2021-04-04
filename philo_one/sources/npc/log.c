@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 22:17:38 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/02 23:49:49 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/04 22:20:45 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,12 @@ size_t	nbrlen(size_t nbr)
 	return (len);
 }
 
-void	console_log(struct timeval start, size_t id, char *str)
+void	console_log(size_t millis, size_t id, char *str)
 {
-	struct timeval	tv;
-	size_t			millis;
 	size_t			length;
 	char			*buffer;
 	char			*ptr;
 
-	if (gettimeofday(&tv, NULL))
-		return ;
-	millis = (tv.tv_sec - start.tv_sec) * 1000
-		+ (tv.tv_usec - start.tv_usec) / 1000;
 	length = 3 + ft_strlen(str) + nbrlen(millis) + nbrlen(id);
 	if (!(buffer = malloc(sizeof(char) * length)))
 		return ;
@@ -71,4 +65,5 @@ void	console_log(struct timeval start, size_t id, char *str)
 	fill_str(&ptr, str);
 	*ptr++ = '\n';
 	write(1, buffer, length);
+	free(buffer);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosphers.h                                      :+:      :+:    :+:   */
+/*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:29:07 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/02 23:47:40 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/04 22:05:02 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ typedef struct	s_philosopher
 	t_fork					*fork_left;
 	t_fork					*fork_right;
 	size_t					eat_count;
+	size_t					millis;
 	bool					*dead;
 	struct s_philosopher	*next;
 	pthread_t				*thread;
