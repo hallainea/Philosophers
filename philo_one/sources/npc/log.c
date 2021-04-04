@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 22:17:38 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/04 22:20:45 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/05 01:53:07 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	console_log(size_t millis, size_t id, char *str)
 		return ;
 	ptr = buffer;
 	fill_nbr(&ptr, millis);
-	*ptr++ = ' ';
+	*ptr++ = '\t';
 	fill_nbr(&ptr, id);
 	*ptr++ = ' ';
 	fill_str(&ptr, str);

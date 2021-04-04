@@ -6,39 +6,24 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 21:48:19 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/04 23:34:54 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/05 01:40:39 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include "../includes/npc.h"
 
-bool	can_eat(t_philosopher *philosopher)
+bool	take_fork(t_philosopher *philosopher, pthread_mutex_t *fork)
 {
-	bool	ret;
-
-	if (philosopher->fork_left->taken || philosopher->fork_right->taken)
-		return (false);
-	pthread_mutex_lock(&philosopher->fork_left->mutex);
-	pthread_mutex_lock(&philosopher->fork_right->mutex);
-	ret = false;
-	if (!philosopher->fork_left->taken && !philosopher->fork_right->taken)
-	{
-		ret = true;
-		philosopher->fork_left->taken = true;
-		console_log(philosopher->millis,
-			philosopher->id, "has taken a fork");
-		philosopher->fork_right->taken = true;
-		console_log(philosopher->millis,
-			philosopher->id, "has taken a fork");
-	}
-	pthread_mutex_unlock(&philosopher->fork_left->mutex);
-	pthread_mutex_unlock(&philosopher->fork_right->mutex);
-	return (ret);
+	pthread_mutex_lock(fork);
+	console_log(philosopher->millis,
+		philosopher->id, "has taken a fork");
+	return (true);
 }
 
-bool	action(t_philosopher *philosopher, size_t *last)
+bool	action(t_philosopher *philosopher)
 {
+	philosopher->thinking = false;
 	console_log(philosopher->millis,
 		philosopher->id, "is eating");
 	usleep(philosopher->parameters->time_to_eat * 1000);
@@ -46,41 +31,34 @@ bool	action(t_philosopher *philosopher, size_t *last)
 	if (philosopher->eat_count >= philosopher->
 		parameters->number_of_times_each_philosopher_must_eat)
 		return (false);
-	philosopher->fork_left->taken = false;
-	philosopher->fork_right->taken = false;
+	pthread_mutex_unlock(philosopher->fork_left);
+	pthread_mutex_unlock(philosopher->fork_right);
 	philosopher->millis += philosopher->parameters->time_to_eat;
-	*last = philosopher->millis;
+	philosopher->last_eat = philosopher->millis;
 	console_log(philosopher->millis,
 		philosopher->id, "is sleeping");
 	usleep(philosopher->parameters->time_to_sleep * 1000);
 	philosopher->millis += philosopher->parameters->time_to_sleep;
 	console_log(philosopher->millis,
 		philosopher->id, "is thinking");
+	philosopher->thinking = true;
 	return (true);
 }
 
 void	*spawn(void *ptr)
 {
 	t_philosopher	*philosopher;
-	struct timeval	temp;
-	size_t			last_millis;
 
-	last_millis = 0;
 	philosopher = ptr;
 	while (!*philosopher->dead)
 	{
-		if (gettimeofday(&temp, NULL))
+		if (!take_fork(philosopher, philosopher->fork_left)
+			|| !take_fork(philosopher, philosopher->fork_right))
 			break ;
-		philosopher->millis = (temp.tv_sec -
-			philosopher->parameters->start.tv_sec) * 1000 + (temp.tv_usec
-			- philosopher->parameters->start.tv_usec) / 1000;
-		if (philosopher->millis - last_millis
-			>= philosopher->parameters->time_to_die)
+		if (!action(philosopher))
 			break ;
-		if (can_eat(philosopher) && !action(philosopher, &last_millis))
-			break ;
+		philosopher->thinking = true;
 	}
-	console_log(philosopher->millis, philosopher->id, "died");
 	*philosopher->dead = true;
 	return (NULL);
 }
