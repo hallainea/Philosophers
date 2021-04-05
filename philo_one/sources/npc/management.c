@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 20:34:23 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/05 01:55:24 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/05 02:36:59 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 #include "../includes/philosophers.h"
 #include "../includes/npc.h"
 
-t_philosopher	*init_philosophers(t_parameters *parameters, pthread_mutex_t *forks,
-	bool *dead, size_t amount)
+t_philosopher	*init_philosophers(t_parameters *parameters,
+	pthread_mutex_t *forks, bool *dead, size_t amount)
 {
 	t_philosopher	*philosopher;
 
@@ -47,7 +47,6 @@ void			spawn_strict(t_philosopher *philosopher)
 		if (!(philosopher->thread = malloc(sizeof(pthread_t))))
 			return ;
 		pthread_create(philosopher->thread, NULL, spawn, philosopher);
-		pthread_detach(*philosopher->thread);
 		philosopher = philosopher->next;
 		if (philosopher)
 			philosopher = philosopher->next;

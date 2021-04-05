@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 21:48:19 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/05 01:40:39 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/05 02:30:47 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 bool	take_fork(t_philosopher *philosopher, pthread_mutex_t *fork)
 {
 	pthread_mutex_lock(fork);
+	if (*philosopher->dead)
+		return (false);
 	console_log(philosopher->millis,
 		philosopher->id, "has taken a fork");
 	return (true);
@@ -59,6 +61,5 @@ void	*spawn(void *ptr)
 			break ;
 		philosopher->thinking = true;
 	}
-	*philosopher->dead = true;
 	return (NULL);
 }

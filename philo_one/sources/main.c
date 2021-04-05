@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:21:09 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/05 01:51:44 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/05 02:46:50 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 #include "includes/main.h"
 #include "includes/npc.h"
 
-int		clean(bool *dead, t_parameters *parameters, pthread_mutex_t *forks,
-	t_philosopher *philosophers)
+int				clean(bool *dead, t_parameters *parameters,
+	pthread_mutex_t *forks, t_philosopher *philosophers)
 {
 	t_philosopher	*tmp;
 
@@ -33,6 +33,7 @@ int		clean(bool *dead, t_parameters *parameters, pthread_mutex_t *forks,
 	while (philosophers)
 	{
 		tmp = philosophers->next;
+		pthread_detach(*philosophers->thread);
 		free(philosophers->thread);
 		free(philosophers);
 		philosophers = tmp;
@@ -40,15 +41,13 @@ int		clean(bool *dead, t_parameters *parameters, pthread_mutex_t *forks,
 	return (1);
 }
 
-#include <stdio.h>
-
-void	alive(t_philosopher *philosophers)
+void			alive(t_philosopher *philosophers)
 {
 	t_philosopher	*next;
 	struct timeval	current;
 	size_t			millis;
 
-	
+	usleep(1000);
 	if (gettimeofday(&current, NULL))
 		return ;
 	millis = (current.tv_sec - philosophers->parameters->start.tv_sec) * 1000 +
@@ -57,25 +56,33 @@ void	alive(t_philosopher *philosophers)
 	while (next)
 	{
 		if (next->thinking)
-		{
-			next->millis = millis;
-			if (next->millis - next->last_eat >= next->parameters->time_to_die)
+			if ((next->millis = millis) - next->last_eat
+				>= next->parameters->time_to_die)
 			{
 				*next->dead = true;
 				console_log(next->millis, next->id, "died");
-				break;
+				break ;
 			}
-		}
 		next = next->next;
 	}
 	if (!*philosophers->dead)
-	{
-		usleep(1000);
 		alive(philosophers);
-	}
 }
 
-int		main(int argc, char **argv)
+t_philosopher	*init(bool *dead, t_parameters *parameters,
+	pthread_mutex_t *forks)
+{
+	size_t	amount;
+
+	amount = parameters->number_of_philosophers;
+	while (amount--)
+		if (pthread_mutex_init(&forks[amount], NULL))
+			return (0);
+	return (init_philosophers(parameters,
+			forks, dead, parameters->number_of_philosophers));
+}
+
+int				main(int argc, char **argv)
 {
 	bool			*dead;
 	t_parameters	*parameters;
@@ -88,12 +95,10 @@ int		main(int argc, char **argv)
 	parameters = NULL;
 	forks = NULL;
 	philosophers = NULL;
-	if (!(parameters = parse(argc, argv)))
-		return (clean(dead, parameters, forks, philosophers));
-	if (!(forks = malloc(sizeof(pthread_mutex_t) * parameters->number_of_philosophers)))
-		return (1);
-	if (!(philosophers = init_philosophers(parameters,
-			forks, dead, parameters->number_of_philosophers)))
+	if (!(parameters = parse(argc, argv))
+		|| !(forks = malloc(sizeof(pthread_mutex_t)
+		* parameters->number_of_philosophers))
+		|| !(philosophers = init(dead, parameters, forks)))
 		return (clean(dead, parameters, forks, philosophers));
 	spawn_all(philosophers);
 	alive(philosophers);
