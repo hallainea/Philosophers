@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:21:09 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/05 02:46:50 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/16 15:15:43 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,17 +69,33 @@ void			alive(t_philosopher *philosophers)
 		alive(philosophers);
 }
 
-t_philosopher	*init(bool *dead, t_parameters *parameters,
-	pthread_mutex_t *forks)
+t_philosopher	*init(t_parameters *parameters,
+	pthread_mutex_t *forks, pthread_mutex_t *eat, bool *dead)
 {
-	size_t	amount;
+	size_t			amount;
+	t_philosopher	*philosophers;
+	t_philosopher	*next;
 
 	amount = parameters->number_of_philosophers;
 	while (amount--)
-		if (pthread_mutex_init(&forks[amount], NULL))
+	{
+		if (pthread_mutex_init(&forks[amount], NULL)
+			|| pthread_mutex_init(&eat[amount], NULL))
 			return (0);
-	return (init_philosophers(parameters,
-			forks, dead, parameters->number_of_philosophers));
+		if (amount)
+			pthread_mutex_lock(eat + amount);
+	}
+	if (!(philosophers = init_philosophers(parameters,
+		forks, parameters->number_of_philosophers)))
+		return (NULL);
+	next = philosophers;
+	while (next)
+	{
+		next->eat = eat;
+		next->dead = dead;
+		next = next->next;
+	}
+	return (philosophers);
 }
 
 int				main(int argc, char **argv)
@@ -87,6 +103,7 @@ int				main(int argc, char **argv)
 	bool			*dead;
 	t_parameters	*parameters;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	*eat;
 	t_philosopher	*philosophers;
 
 	if (!(dead = malloc(sizeof(bool))))
@@ -98,7 +115,9 @@ int				main(int argc, char **argv)
 	if (!(parameters = parse(argc, argv))
 		|| !(forks = malloc(sizeof(pthread_mutex_t)
 		* parameters->number_of_philosophers))
-		|| !(philosophers = init(dead, parameters, forks)))
+		|| !(eat = malloc(sizeof(pthread_mutex_t)
+		* parameters->number_of_philosophers))
+		|| !(philosophers = init(parameters, forks, eat, dead)))
 		return (clean(dead, parameters, forks, philosophers));
 	spawn_all(philosophers);
 	alive(philosophers);

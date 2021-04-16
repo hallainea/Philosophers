@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 21:48:19 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/05 02:30:47 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/16 15:19:05 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,16 +50,23 @@ bool	action(t_philosopher *philosopher)
 void	*spawn(void *ptr)
 {
 	t_philosopher	*philosopher;
+	size_t			next;
 
 	philosopher = ptr;
 	while (!*philosopher->dead)
 	{
+		pthread_mutex_lock(philosopher->eat + (philosopher->id - 1));
 		if (!take_fork(philosopher, philosopher->fork_left)
 			|| !take_fork(philosopher, philosopher->fork_right))
 			break ;
+		next = philosopher->id + 1;
+		if (next >= philosopher->parameters->number_of_philosophers)
+			next = philosopher->id % 2;
+		pthread_mutex_unlock(philosopher->eat + next);
 		if (!action(philosopher))
 			break ;
-		philosopher->thinking = true;
 	}
+	console_log(philosopher->millis, philosopher->id, "died");
+	*philosopher->dead = true;
 	return (NULL);
 }

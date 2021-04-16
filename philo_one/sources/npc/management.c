@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 20:34:23 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/05 02:36:59 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/16 15:12:13 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "../includes/npc.h"
 
 t_philosopher	*init_philosophers(t_parameters *parameters,
-	pthread_mutex_t *forks, bool *dead, size_t amount)
+	pthread_mutex_t *forks, size_t amount)
 {
 	t_philosopher	*philosopher;
 
@@ -33,29 +33,19 @@ t_philosopher	*init_philosophers(t_parameters *parameters,
 	philosopher->millis = 0;
 	philosopher->last_eat = 0;
 	philosopher->thinking = true;
-	philosopher->dead = dead;
 	philosopher->next = NULL;
 	if (--amount)
-		philosopher->next = init_philosophers(parameters, forks, dead, amount);
+		philosopher->next = init_philosophers(parameters, forks, amount);
 	return (philosopher);
-}
-
-void			spawn_strict(t_philosopher *philosopher)
-{
-	while (philosopher)
-	{
-		if (!(philosopher->thread = malloc(sizeof(pthread_t))))
-			return ;
-		pthread_create(philosopher->thread, NULL, spawn, philosopher);
-		philosopher = philosopher->next;
-		if (philosopher)
-			philosopher = philosopher->next;
-	}
 }
 
 void			spawn_all(t_philosopher *philosophers)
 {
-	spawn_strict(philosophers);
-	usleep(50);
-	spawn_strict(philosophers->next);
+	while (philosophers)
+	{
+		if (!(philosophers->thread = malloc(sizeof(pthread_t))))
+			return ;
+		pthread_create(philosophers->thread, NULL, spawn, philosophers);
+		philosophers = philosophers->next;
+	}
 }
