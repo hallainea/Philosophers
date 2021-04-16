@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:21:09 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/16 15:15:43 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/16 15:35:37 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,28 +15,33 @@
 #include "includes/main.h"
 #include "includes/npc.h"
 
-int				clean(bool *dead, t_parameters *parameters,
-	pthread_mutex_t *forks, t_philosopher *philosophers)
+int				clean(t_parameters *parameters,
+	t_philosopher *philosophers, pthread_mutex_t *forks)
 {
-	t_philosopher	*tmp;
+	t_philosopher	*next;
 
-	free(dead);
-	if (forks)
+	if (philosophers)
 	{
-		while (philosophers->parameters->number_of_philosophers--)
-			pthread_mutex_destroy(&forks[philosophers->
-				parameters->number_of_philosophers]);
+		while (parameters->number_of_philosophers--)
+		{
+			pthread_mutex_destroy(forks + philosophers->
+				parameters->number_of_philosophers);
+			pthread_mutex_destroy(philosophers->eat + philosophers->
+				parameters->number_of_philosophers);
+		}
 		free(forks);
+		free(philosophers->eat);
+		free(philosophers->dead);
 	}
 	if (parameters)
 		free(parameters);
 	while (philosophers)
 	{
-		tmp = philosophers->next;
+		next = philosophers->next;
 		pthread_detach(*philosophers->thread);
 		free(philosophers->thread);
 		free(philosophers);
-		philosophers = tmp;
+		philosophers = next;
 	}
 	return (1);
 }
@@ -118,9 +123,9 @@ int				main(int argc, char **argv)
 		|| !(eat = malloc(sizeof(pthread_mutex_t)
 		* parameters->number_of_philosophers))
 		|| !(philosophers = init(parameters, forks, eat, dead)))
-		return (clean(dead, parameters, forks, philosophers));
+		return (clean(parameters, philosophers, forks));
 	spawn_all(philosophers);
 	alive(philosophers);
-	clean(dead, parameters, forks, philosophers);
+	clean(parameters, philosophers, forks);
 	return (0);
 }
