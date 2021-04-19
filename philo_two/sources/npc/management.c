@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 20:34:23 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/18 20:40:39 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/19 20:56:24 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ void			spawn_all(t_philosopher *philosophers)
 		if (!(philosophers->thread = malloc(sizeof(pthread_t))))
 			return ;
 		pthread_create(philosophers->thread, NULL, spawn, philosophers);
-		pthread_detach(*philosophers->thread);
 		philosophers = philosophers->next;
 	}
 }

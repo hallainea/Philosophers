@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:21:09 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/19 10:17:37 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/19 21:10:19 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,33 +15,8 @@
 #include "includes/main.h"
 #include "includes/npc.h"
 #include "includes/utils.h"
-
-int				clean(t_parameters *parameters,
-	t_philosopher *philosophers, sem_t *forks)
-{
-	t_philosopher	*next;
-
-	(void)forks;
-	/*if (forks)
-		sem_close(forks);*/
-	if (philosophers)
-	{
-		/*while (philosophers->parameters->number_of_philosophers--)
-			sem_close(philosophers->eat[philosophers->parameters->number_of_philosophers]);*/
-		free(philosophers->eat);
-		free(philosophers->dead);
-	}
-	if (parameters)
-		free(parameters);
-	while (philosophers)
-	{
-		next = philosophers->next;
-		free(philosophers->thread);
-		free(philosophers);
-		philosophers = next;
-	}
-	return (1);
-}
+#include <fcntl.h>
+#include <sys/stat.h>
 
 void			alive(t_philosopher *philosophers)
 {
@@ -61,8 +36,8 @@ void			alive(t_philosopher *philosophers)
 			if ((next->millis = millis) - next->last_eat
 				>= next->parameters->time_to_die)
 			{
+				console_log(next, "died");
 				*next->dead = true;
-				console_log(next->millis, next->id, "died");
 				break ;
 			}
 		next = next->next;
@@ -73,12 +48,15 @@ void			alive(t_philosopher *philosophers)
 
 sem_t			*create_sem(size_t id, int value)
 {
+	size_t	size;
 	char	*name;
 	char	*ptr;
 	sem_t	*ret;
 
-	if (!(name = malloc(sizeof(char) * (ft_strlen("philo ") + nbrlen(id)))))
+	size = ft_strlen("philo ") + nbrlen(id);
+	if (!(name = malloc(sizeof(char) * (size + 1))))
 		return (NULL);
+	name[size] = 0;
 	ptr = name;
 	fill_str(&ptr, "philo ");
 	fill_nbr(&ptr, id);

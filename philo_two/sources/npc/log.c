@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 22:17:38 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/05 01:53:07 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/19 19:58:45 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include "../includes/utils.h"
+#include "../includes/philosophers.h"
 
 void	fill_nbr(char **ptr, size_t nbr)
 {
@@ -48,22 +49,26 @@ size_t	nbrlen(size_t nbr)
 	return (len);
 }
 
-void	console_log(size_t millis, size_t id, char *str)
+void	console_log(t_philosopher *philosopher, char *str)
 {
 	size_t			length;
 	char			*buffer;
 	char			*ptr;
 
-	length = 3 + ft_strlen(str) + nbrlen(millis) + nbrlen(id);
+	if (!philosopher->dead)
+		return ;
+	length = 3 + ft_strlen(str) + nbrlen(philosopher->millis)
+		+ nbrlen(philosopher->id);
 	if (!(buffer = malloc(sizeof(char) * length)))
 		return ;
 	ptr = buffer;
-	fill_nbr(&ptr, millis);
+	fill_nbr(&ptr, philosopher->millis);
 	*ptr++ = '\t';
-	fill_nbr(&ptr, id);
+	fill_nbr(&ptr, philosopher->id);
 	*ptr++ = ' ';
 	fill_str(&ptr, str);
 	*ptr++ = '\n';
-	write(1, buffer, length);
+	if (!*philosopher->dead)
+		write(1, buffer, length);
 	free(buffer);
 }
