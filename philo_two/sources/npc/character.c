@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 21:48:19 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/18 22:26:56 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/19 10:02:20 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,14 +55,14 @@ void	*spawn(void *ptr)
 	philosopher = ptr;
 	while (!*philosopher->dead)
 	{
-		sem_wait(philosopher->eat + (philosopher->id - 1));
+		sem_wait(philosopher->eat[philosopher->id - 1]);
 		if (!take_fork(philosopher)
 			|| !take_fork(philosopher))
 			break ;
 		next = philosopher->id + 1;
 		if (next >= philosopher->parameters->number_of_philosophers)
 			next = philosopher->id % 2;
-		sem_post(philosopher->eat + next);
+		sem_post(philosopher->eat[next]);
 		if (!action(philosopher))
 			break ;
 	}

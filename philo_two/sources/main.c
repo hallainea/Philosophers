@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:21:09 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/18 22:32:20 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/19 10:17:37 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@ int				clean(t_parameters *parameters,
 {
 	t_philosopher	*next;
 
-	if (forks)
-		sem_close(forks);
+	(void)forks;
+	/*if (forks)
+		sem_close(forks);*/
 	if (philosophers)
 	{
 		/*while (philosophers->parameters->number_of_philosophers--)
-			sem_close(philosophers->eat
-				+ philosophers->parameters->number_of_philosophers);*/
+			sem_close(philosophers->eat[philosophers->parameters->number_of_philosophers]);*/
 		free(philosophers->eat);
 		free(philosophers->dead);
 	}
@@ -71,29 +71,38 @@ void			alive(t_philosopher *philosophers)
 		alive(philosophers);
 }
 
+sem_t			*create_sem(size_t id, int value)
+{
+	char	*name;
+	char	*ptr;
+	sem_t	*ret;
+
+	if (!(name = malloc(sizeof(char) * (ft_strlen("philo ") + nbrlen(id)))))
+		return (NULL);
+	ptr = name;
+	fill_str(&ptr, "philo ");
+	fill_nbr(&ptr, id);
+	sem_unlink(name);
+	ret = sem_open(name, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR, value);
+	free(name);
+	return (ret);
+}
+
 t_philosopher	*init(t_parameters *parameters,
 	sem_t *forks, bool *dead)
 {
 	size_t			amount;
-	char			*name;
-	sem_t			*eat;
-	sem_t			*temp;
+	sem_t			**eat;
 	t_philosopher	*philosophers;
 	t_philosopher	*next;
 
-	if (!(eat = malloc(sizeof(sem_t)
+	if (!(eat = malloc(sizeof(sem_t *)
 		* parameters->number_of_philosophers)))
 		return (NULL);
-	temp = eat;
 	amount = parameters->number_of_philosophers;
 	while (amount--)
-	{
-		name = ft_itoa(parameters->number_of_philosophers - amount - 1);
-		sem_unlink(name);
-		temp++;
-		temp = sem_open(name, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR, 0);
-	}
-	sem_post(eat);
+		eat[amount] = create_sem(amount + 1, 0);
+	sem_post(*eat);
 	if (!(philosophers = init_philosophers(parameters,
 		parameters->number_of_philosophers)))
 		return (NULL);

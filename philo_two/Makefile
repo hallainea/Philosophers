@@ -5,7 +5,6 @@ DIRECTORY_OBJECTS	=	objects
 
 SOURCES				=	utils/ft_strlen.c \
 						utils/ft_atos.c \
-						utils/ft_itoa.c \
 						npc/log.c \
 						npc/character.c \
 						npc/management.c \

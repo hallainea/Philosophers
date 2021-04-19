@@ -23,7 +23,7 @@ typedef struct	s_philosopher
 	size_t					id;
 	t_parameters			*parameters;
 	sem_t					*forks;
-	sem_t					*eat;
+	sem_t					**eat;
 	size_t					eat_count;
 	size_t					millis;
 	size_t					last_eat;
