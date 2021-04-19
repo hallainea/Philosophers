@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/19 19:59:10 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/19 21:26:41 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/20 00:44:37 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int				clean(t_parameters *parameters,
 	t_philosopher *philosophers, sem_t *forks)
 {
 	sem_t			**eat;
-	bool			*dead;
+	t_dead			*dead;
 
 	eat = NULL;
 	dead = NULL;
@@ -57,6 +57,9 @@ int				clean(t_parameters *parameters,
 	if (eat)
 		free(eat);
 	if (dead)
+	{
+		sem_close(dead->alive);
 		free(dead);
+	}
 	return (1);
 }

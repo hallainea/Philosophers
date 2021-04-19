@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 20:34:23 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/19 20:56:24 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/20 00:25:04 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ t_philosopher	*init_philosophers(t_parameters *parameters,
 	philosopher->eat_count = 0;
 	philosopher->millis = 0;
 	philosopher->last_eat = 0;
-	philosopher->thinking = true;
 	philosopher->next = NULL;
 	if (--amount)
 		philosopher->next = init_philosophers(parameters, amount);

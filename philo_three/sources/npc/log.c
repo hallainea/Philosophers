@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 22:17:38 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/19 19:58:45 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/19 23:58:31 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	console_log(t_philosopher *philosopher, char *str)
 	char			*buffer;
 	char			*ptr;
 
-	if (!philosopher->dead)
+	if (philosopher->dead->is)
 		return ;
 	length = 3 + ft_strlen(str) + nbrlen(philosopher->millis)
 		+ nbrlen(philosopher->id);
@@ -68,7 +68,7 @@ void	console_log(t_philosopher *philosopher, char *str)
 	*ptr++ = ' ';
 	fill_str(&ptr, str);
 	*ptr++ = '\n';
-	if (!*philosopher->dead)
+	if (!philosopher->dead->is)
 		write(1, buffer, length);
 	free(buffer);
 }
