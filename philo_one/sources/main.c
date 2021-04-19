@@ -6,7 +6,7 @@
 /*   By: ahallain <ahallain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 12:21:09 by ahallain          #+#    #+#             */
-/*   Updated: 2021/04/18 22:21:49 by ahallain         ###   ########.fr       */
+/*   Updated: 2021/04/19 20:00:44 by ahallain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,6 @@
 #include <unistd.h>
 #include "includes/main.h"
 #include "includes/npc.h"
-
-int				clean(t_parameters *parameters,
-	t_philosopher *philosophers, pthread_mutex_t *forks)
-{
-	t_philosopher	*next;
-
-	if (philosophers)
-	{
-		while (philosophers->parameters->number_of_philosophers--)
-		{
-			pthread_mutex_destroy(forks + philosophers->
-				parameters->number_of_philosophers);
-			pthread_mutex_destroy(philosophers->eat + philosophers->
-				parameters->number_of_philosophers);
-		}
-		free(forks);
-		free(philosophers->eat);
-		free(philosophers->dead);
-	}
-	if (parameters)
-		free(parameters);
-	while (philosophers)
-	{
-		next = philosophers->next;
-		free(philosophers->thread);
-		free(philosophers);
-		philosophers = next;
-	}
-	return (1);
-}
 
 void			alive(t_philosopher *philosophers)
 {
@@ -63,8 +33,8 @@ void			alive(t_philosopher *philosophers)
 			if ((next->millis = millis) - next->last_eat
 				>= next->parameters->time_to_die)
 			{
+				console_log(next, "died");
 				*next->dead = true;
-				console_log(next->millis, next->id, "died");
 				break ;
 			}
 		next = next->next;

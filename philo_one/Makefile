@@ -9,6 +9,7 @@ SOURCES				=	utils/ft_strlen.c \
 						npc/character.c \
 						npc/management.c \
 						parse.c \
+						clean.c \
 						main.c
 OBJECTS				=	$(SOURCES:%.c=$(DIRECTORY_OBJECTS)/%.o)
 
